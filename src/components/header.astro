@@ -1,0 +1,92 @@
+---
+const current_path = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">
+      <span class="logo-scout">scout</span><span class="logo-os">os</span><span class="logo-sep">/</span><span class="logo-labs">labs</span>
+    </a>
+    <nav>
+      <a href="/reports/" class:list={[{ active: current_path.startsWith('/reports') }]}>
+        reports
+      </a>
+      <a href="/rss.xml" class="rss-link" title="RSS Feed">
+        rss
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5, 5, 7, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: -0.03em;
+  }
+
+  .logo-scout {
+    color: var(--color-text-muted);
+  }
+
+  .logo-os {
+    color: var(--color-text);
+  }
+
+  .logo-sep {
+    color: var(--color-text-muted);
+    margin: 0 0.05em;
+  }
+
+  .logo-labs {
+    color: var(--color-green);
+  }
+
+  nav {
+    display: flex;
+    gap: var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  nav a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    letter-spacing: 0.02em;
+  }
+
+  nav a:hover,
+  nav a.active {
+    color: var(--color-text-bright);
+  }
+
+  .rss-link {
+    opacity: 0.6;
+  }
+
+  .rss-link:hover {
+    opacity: 1;
+  }
+</style>

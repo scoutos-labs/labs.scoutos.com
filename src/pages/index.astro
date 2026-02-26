@@ -1,0 +1,376 @@
+---
+import BaseLayout from '../layouts/base-layout.astro';
+import { getCollection, render } from 'astro:content';
+
+const all_reports = await getCollection('reports');
+const sorted = all_reports.sort((a, b) =>
+  b.data.number.localeCompare(a.data.number)
+);
+const latest = sorted[0];
+const { Content } = await render(latest);
+
+const format_date = (date_str: string) => {
+  const d = new Date(date_str + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+---
+
+<BaseLayout title="ScoutOS Labs — Experimental AI Research">
+  <!-- Hero entrance -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">Lab Active</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="title-line">ScoutOS</span>
+        <span class="title-line accent">Labs</span>
+      </h1>
+
+      <p class="hero-sub">
+        Experimental AI research &amp; development.<br />
+        Dispatches published Fridays.
+      </p>
+
+      <div class="hero-scroll-hint">
+        <span class="scroll-line"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest report — featured -->
+  <section class="latest-report">
+    <div class="report-container">
+      <div class="report-header">
+        <div class="report-meta">
+          <span class="report-number">Lab Report #{latest.data.number}</span>
+          <span class="meta-sep">/</span>
+          <time datetime={latest.data.date}>{format_date(latest.data.date)}</time>
+        </div>
+        <h2 class="report-title">
+          <a href={`/reports/${latest.data.number}/`}>{latest.data.title}</a>
+        </h2>
+      </div>
+
+      {latest.data.highlights.length > 0 && (
+        <div class="report-highlights">
+          <div class="highlights-label">Highlights</div>
+          <ul class="highlights-list">
+            {latest.data.highlights.map((h: string) => (
+              <li>
+                <span class="highlight-marker">&rsaquo;</span>
+                {h}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div class="report-body">
+        <Content />
+      </div>
+
+      <div class="report-footer">
+        <a href={`/reports/${latest.data.number}/`} class="read-link">
+          Full report &rarr;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Signal -->
+  <section class="signal">
+    <div class="signal-inner">
+      <div class="signal-line"></div>
+      <p class="signal-text">
+        New reports every Friday.
+        <a href="/rss.xml">Subscribe via RSS</a> or check back.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* === Hero === */
+  .hero {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero-inner {
+    padding: var(--space-xl);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-green);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-xl);
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid rgba(78, 205, 196, 0.2);
+    border-radius: 2px;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-green);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    margin-bottom: var(--space-lg);
+  }
+
+  .title-line {
+    display: block;
+    color: var(--color-text-bright);
+  }
+
+  .title-line.accent {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-green);
+    text-stroke: 1.5px var(--color-green);
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+
+  .hero-scroll-hint {
+    margin-top: var(--space-2xl);
+    display: flex;
+    justify-content: center;
+  }
+
+  .scroll-line {
+    display: block;
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--color-text-muted), transparent);
+    animation: scroll-fade 2s ease-in-out infinite;
+  }
+
+  @keyframes scroll-fade {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.1; }
+  }
+
+  /* === Latest Report === */
+  .latest-report {
+    padding: var(--space-2xl) 0;
+  }
+
+  .report-container {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
+  }
+
+  .report-header {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .report-meta {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .report-number {
+    color: var(--color-green);
+  }
+
+  .meta-sep {
+    opacity: 0.3;
+  }
+
+  .report-title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 500;
+  }
+
+  .report-title a {
+    color: var(--color-text-bright);
+    text-decoration: none;
+  }
+
+  .report-title a:hover {
+    color: var(--color-green);
+  }
+
+  /* === Highlights === */
+  .report-highlights {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
+  }
+
+  .highlights-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--space-md);
+  }
+
+  .highlights-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .highlights-list li {
+    font-size: 0.9rem;
+    color: var(--color-text);
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .highlight-marker {
+    color: var(--color-green);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* === Report Body === */
+  .report-body {
+    margin-bottom: var(--space-xl);
+  }
+
+  .report-body :global(h2) {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .report-body :global(h3) {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .report-body :global(p) {
+    margin-bottom: var(--space-md);
+  }
+
+  .report-body :global(hr) {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: var(--space-xl) 0;
+  }
+
+  .report-body :global(em) {
+    color: var(--color-text-muted);
+  }
+
+  .report-body :global(strong) {
+    color: var(--color-text-bright);
+    font-weight: 600;
+  }
+
+  .report-body :global(ul), .report-body :global(ol) {
+    margin-bottom: var(--space-md);
+    padding-left: var(--space-lg);
+  }
+
+  .report-body :global(li) {
+    margin-bottom: var(--space-xs);
+  }
+
+  .report-body :global(blockquote) {
+    border-left: 2px solid var(--color-green);
+    padding-left: var(--space-md);
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin-bottom: var(--space-md);
+  }
+
+  /* === Report Footer === */
+  .report-footer {
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .read-link {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-green);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .read-link:hover {
+    color: var(--color-text-bright);
+    letter-spacing: 0.05em;
+  }
+
+  /* === Signal === */
+  .signal {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+
+  .signal-inner {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .signal-line {
+    width: 40px;
+    height: 1px;
+    background: var(--color-border);
+    margin: 0 auto var(--space-lg);
+  }
+
+  .signal-text {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+
+  .signal-text a {
+    color: var(--color-green);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

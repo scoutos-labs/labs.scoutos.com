@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../../layouts/base-layout.astro';
+import { getCollection } from 'astro:content';
+
+const all_reports = await getCollection('reports');
+const sorted = all_reports.sort((a, b) =>
+  b.data.number.localeCompare(a.data.number)
+);
+
+const format_date = (date_str: string) => {
+  const d = new Date(date_str + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+---
+
+<BaseLayout title="Lab Reports — ScoutOS Labs">
+  <section class="archive">
+    <div class="archive-inner">
+      <header class="archive-header">
+        <div class="archive-label">Archive</div>
+        <h1>Lab Reports</h1>
+        <p class="archive-desc">
+          Field notes from the bench. Published Fridays.
+        </p>
+      </header>
+
+      <div class="reports-table">
+        <div class="table-header">
+          <span class="col-number">#</span>
+          <span class="col-title">Title</span>
+          <span class="col-date">Date</span>
+        </div>
+
+        {sorted.map((report) => (
+          <a href={`/reports/${report.data.number}/`} class="table-row">
+            <span class="col-number">{report.data.number}</span>
+            <span class="col-title">{report.data.title}</span>
+            <time class="col-date" datetime={report.data.date}>
+              {format_date(report.data.date)}
+            </time>
+          </a>
+        ))}
+      </div>
+
+      {sorted.length === 0 && (
+        <div class="empty-state">
+          <p>No reports filed yet. Check back Friday.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .archive {
+    padding: var(--space-2xl) var(--space-lg);
+  }
+
+  .archive-inner {
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+
+  .archive-header {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .archive-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: var(--space-md);
+  }
+
+  .archive-header h1 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .archive-desc {
+    color: var(--color-text-muted);
+    font-size: 1rem;
+  }
+
+  /* === Table === */
+  .reports-table {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-header {
+    display: grid;
+    grid-template-columns: 3rem 1fr 7rem;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr 7rem;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: background 0.15s ease;
+    margin: 0 calc(-1 * var(--space-sm));
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+    border-radius: 2px;
+  }
+
+  .table-row:hover {
+    background: var(--color-surface);
+  }
+
+  .table-row .col-number {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-green);
+  }
+
+  .table-row .col-title {
+    color: var(--color-text-bright);
+    font-weight: 500;
+  }
+
+  .table-row .col-date {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-align: right;
+  }
+
+  .table-row:hover .col-title {
+    color: var(--color-green);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-2xl);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .table-header {
+      display: none;
+    }
+
+    .table-row {
+      grid-template-columns: 3rem 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .table-row .col-date {
+      grid-column: 2;
+      text-align: left;
+      font-size: 0.75rem;
+    }
+  }
+</style>
