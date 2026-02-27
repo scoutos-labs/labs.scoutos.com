@@ -5,6 +5,10 @@ const current_path = Astro.url.pathname;
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">
+      <!-- ScoutOS geometric compass mark — scoutos.com/brand -->
+      <svg class="logo-mark" viewBox="0 0 63 70" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="currentColor" d="M31.452 0a5.154 5.154 0 0 1 5.154 5.154V26.6l18.567-10.72a5.154 5.154 0 0 1 5.154 8.926L41.763 35.524l18.553 10.711a5.154 5.154 0 0 1-5.154 8.927L36.606 44.448v21.425a5.154 5.154 0 1 1-10.307 0v-21.42L7.742 55.165a5.154 5.154 0 1 1-5.154-8.926l18.56-10.716-18.57-10.722a5.154 5.154 0 1 1 5.153-8.926L26.3 26.596V5.153A5.154 5.154 0 0 1 31.452 0"/>
+      </svg>
       <span class="logo-scout">scout</span><span class="logo-os">os</span><span class="logo-sep">/</span><span class="logo-labs">labs</span>
     </a>
     <nav>
@@ -23,9 +27,9 @@ const current_path = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(5, 5, 7, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(5, 5, 7, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -39,11 +43,26 @@ const current_path = Astro.url.pathname;
   }
 
   .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
     font-family: var(--font-mono);
     font-size: 1.1rem;
     font-weight: 500;
     text-decoration: none;
     letter-spacing: -0.03em;
+  }
+
+  .logo-mark {
+    width: 17px;
+    height: auto;
+    color: var(--color-accent);
+    flex-shrink: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .logo:hover .logo-mark {
+    opacity: 0.7;
   }
 
   .logo-scout {
@@ -60,7 +79,10 @@ const current_path = Astro.url.pathname;
   }
 
   .logo-labs {
-    color: var(--color-green);
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   nav {
@@ -83,7 +105,7 @@ const current_path = Astro.url.pathname;
   }
 
   .rss-link {
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
   .rss-link:hover {

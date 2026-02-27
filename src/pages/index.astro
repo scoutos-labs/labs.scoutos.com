@@ -1,13 +1,12 @@
 ---
 import BaseLayout from '../layouts/base-layout.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 
 const all_reports = await getCollection('reports');
 const sorted = all_reports.sort((a, b) =>
   b.data.number.localeCompare(a.data.number)
 );
 const latest = sorted[0];
-const { Content } = await render(latest);
 
 const format_date = (date_str: string) => {
   const d = new Date(date_str + 'T00:00:00');
@@ -20,78 +19,152 @@ const format_date = (date_str: string) => {
 ---
 
 <BaseLayout title="ScoutOS Labs — Experimental AI Research">
-  <!-- Hero entrance -->
+  <!-- Hero with layered visual -->
   <section class="hero">
+    <!-- Layer 1: Generated image (water caustics) -->
+    <div class="hero-img" aria-hidden="true">
+      <picture>
+        <source srcset="/hero-bg.webp" type="image/webp" />
+        <img src="/hero-bg.png" alt="" width="1408" height="768" />
+      </picture>
+    </div>
+
+    <!-- Layer 2: Subtle animated refraction lines -->
+    <div class="hero-refract" aria-hidden="true">
+      <svg viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="refract-1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#5BA9A4" stop-opacity="0" />
+            <stop offset="30%" stop-color="#5BA9A4" stop-opacity="0.12" />
+            <stop offset="50%" stop-color="#8491C1" stop-opacity="0.16" />
+            <stop offset="70%" stop-color="#BE98C7" stop-opacity="0.12" />
+            <stop offset="100%" stop-color="#BE98C7" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="refract-2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#8491C1" stop-opacity="0" />
+            <stop offset="40%" stop-color="#8491C1" stop-opacity="0.08" />
+            <stop offset="60%" stop-color="#5BA9A4" stop-opacity="0.1" />
+            <stop offset="100%" stop-color="#5BA9A4" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+
+        <line x1="100" y1="200" x2="1100" y2="380" stroke="url(#refract-1)" stroke-width="0.8">
+          <animate attributeName="y1" values="200;215;200" dur="14s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="380;365;380" dur="18s" repeatCount="indefinite" />
+        </line>
+        <line x1="200" y1="420" x2="1000" y2="300" stroke="url(#refract-2)" stroke-width="0.6">
+          <animate attributeName="y1" values="420;405;420" dur="16s" repeatCount="indefinite" />
+          <animate attributeName="y2" values="300;315;300" dur="20s" repeatCount="indefinite" />
+        </line>
+      </svg>
+    </div>
+
+    <!-- Layer 3: Vignette to fade edges to black -->
+    <div class="hero-vignette" aria-hidden="true"></div>
+
     <div class="hero-inner">
-      <div class="hero-badge">
+      <div class="hero-badge glass">
         <span class="badge-dot"></span>
         <span class="badge-text">Lab Active</span>
       </div>
 
       <h1 class="hero-title">
         <span class="title-line">ScoutOS</span>
-        <span class="title-line accent">Labs</span>
+        <span class="title-line title-gradient">Labs</span>
       </h1>
 
-      <p class="hero-sub">
-        Experimental AI research &amp; development.<br />
-        Dispatches published Fridays.
+      <p class="hero-tagline">
+        AI agents that survive contact with reality.
       </p>
 
-      <div class="hero-scroll-hint">
-        <span class="scroll-line"></span>
+      <p class="hero-sub">
+        Experimental research & development dispatches.<br />
+        We're building in the open.
+      </p>
+    </div>
+  </section>
+
+  <!-- What we're working on -->
+  <section class="workbench">
+    <div class="workbench-inner">
+      <div class="section-label">
+        <span class="label-line"></span>
+        <span class="label-text">The Workbench</span>
+        <span class="label-line"></span>
+      </div>
+
+      <div class="workbench-grid">
+        <div class="work-card glass">
+          <div class="card-accent"></div>
+          <h3>Agent Architecture</h3>
+          <p>Multi-agent coordination, persistent memory, self-directed task execution. The infrastructure for AI that actually works.</p>
+        </div>
+
+        <div class="work-card glass">
+          <div class="card-accent accent-blue"></div>
+          <h3>Developer Tools</h3>
+          <p>CLI frameworks, agent runners, session management. Tools we build because we need them, then share because others do too.</p>
+        </div>
+
+        <div class="work-card glass">
+          <div class="card-accent accent-purple"></div>
+          <h3>Field Reports</h3>
+          <p>What breaks, what compounds, what surprises us. Published Fridays. No hype, no benchmarks, just the work.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Latest report — featured -->
-  <section class="latest-report">
-    <div class="report-container">
-      <div class="report-header">
-        <div class="report-meta">
-          <span class="report-number">Lab Report #{latest.data.number}</span>
-          <span class="meta-sep">/</span>
-          <time datetime={latest.data.date}>{format_date(latest.data.date)}</time>
-        </div>
-        <h2 class="report-title">
-          <a href={`/reports/${latest.data.number}/`}>{latest.data.title}</a>
-        </h2>
+  <!-- Latest dispatch -->
+  <section class="latest-dispatch">
+    <div class="dispatch-inner">
+      <div class="section-label">
+        <span class="label-line"></span>
+        <span class="label-text">Latest Dispatch</span>
+        <span class="label-line"></span>
       </div>
 
-      {latest.data.highlights.length > 0 && (
-        <div class="report-highlights">
-          <div class="highlights-label">Highlights</div>
-          <ul class="highlights-list">
-            {latest.data.highlights.map((h: string) => (
+      <a href={`/reports/${latest.data.number}/`} class="dispatch-card gradient-border glass">
+        <div class="dispatch-meta">
+          <span class="dispatch-number">#{latest.data.number}</span>
+          <span class="dispatch-sep">/</span>
+          <time datetime={latest.data.date}>{format_date(latest.data.date)}</time>
+        </div>
+
+        <h2 class="dispatch-title">{latest.data.title}</h2>
+
+        {latest.data.highlights.length > 0 && (
+          <ul class="dispatch-highlights">
+            {latest.data.highlights.slice(0, 3).map((h: string) => (
               <li>
-                <span class="highlight-marker">&rsaquo;</span>
+                <span class="hl-marker">&rsaquo;</span>
                 {h}
               </li>
             ))}
           </ul>
+        )}
+
+        <div class="dispatch-cta">
+          <span>Read dispatch</span>
+          <span class="cta-arrow">&rarr;</span>
         </div>
-      )}
-
-      <div class="report-body">
-        <Content />
-      </div>
-
-      <div class="report-footer">
-        <a href={`/reports/${latest.data.number}/`} class="read-link">
-          Full report &rarr;
-        </a>
-      </div>
+      </a>
     </div>
   </section>
 
   <!-- Signal -->
   <section class="signal">
     <div class="signal-inner">
-      <div class="signal-line"></div>
-      <p class="signal-text">
-        New reports every Friday.
-        <a href="/rss.xml">Subscribe via RSS</a> or check back.
-      </p>
+      <div class="signal-content glass">
+        <p class="signal-text">
+          New dispatches every Friday.
+        </p>
+        <div class="signal-actions">
+          <a href="/rss.xml" class="signal-link">Subscribe via RSS</a>
+          <span class="signal-divider">&middot;</span>
+          <a href="/reports/" class="signal-link">View archive</a>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -105,10 +178,55 @@ const format_date = (date_str: string) => {
     justify-content: center;
     text-align: center;
     position: relative;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.35;
+  }
+
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+
+  .hero-refract {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  .hero-refract svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse at 50% 40%,
+      transparent 30%,
+      rgba(5, 5, 7, 0.4) 60%,
+      rgba(5, 5, 7, 0.9) 80%,
+      var(--color-bg) 100%
+    );
   }
 
   .hero-inner {
     padding: var(--space-xl);
+    position: relative;
+    z-index: 3;
   }
 
   .hero-badge {
@@ -116,35 +234,34 @@ const format_date = (date_str: string) => {
     align-items: center;
     gap: var(--space-sm);
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-green);
-    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-2xl);
     padding: var(--space-xs) var(--space-md);
-    border: 1px solid rgba(78, 205, 196, 0.2);
-    border-radius: 2px;
+    color: var(--color-text);
   }
 
   .badge-dot {
     width: 6px;
     height: 6px;
-    background: var(--color-green);
+    background: var(--color-accent);
     border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(110, 196, 190, 0.6);
+    animation: pulse 2.5s ease-in-out infinite;
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(110, 196, 190, 0.6); }
+    50% { opacity: 0.4; box-shadow: 0 0 4px rgba(110, 196, 190, 0.2); }
   }
 
   .hero-title {
-    font-size: clamp(3rem, 10vw, 7rem);
-    font-weight: 700;
-    line-height: 0.95;
-    letter-spacing: -0.04em;
-    margin-bottom: var(--space-lg);
+    font-size: clamp(3.5rem, 12vw, 8rem);
+    font-weight: 500;
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    margin-bottom: var(--space-xl);
   }
 
   .title-line {
@@ -152,57 +269,137 @@ const format_date = (date_str: string) => {
     color: var(--color-text-bright);
   }
 
-  .title-line.accent {
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--color-green);
-    text-stroke: 1.5px var(--color-green);
+  .title-gradient {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-tagline {
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    color: var(--color-text-bright);
+    margin-bottom: var(--space-md);
+    letter-spacing: -0.01em;
   }
 
   .hero-sub {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--color-text-muted);
     line-height: 1.6;
     max-width: 28rem;
     margin: 0 auto;
   }
 
-  .hero-scroll-hint {
-    margin-top: var(--space-2xl);
+  /* === Section labels === */
+  .section-label {
     display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
     justify-content: center;
   }
 
-  .scroll-line {
-    display: block;
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, var(--color-text-muted), transparent);
-    animation: scroll-fade 2s ease-in-out infinite;
+  .label-line {
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--color-border);
   }
 
-  @keyframes scroll-fade {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.1; }
+  .label-text {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
   }
 
-  /* === Latest Report === */
-  .latest-report {
-    padding: var(--space-2xl) 0;
+  /* === Workbench === */
+  .workbench {
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
   }
 
-  .report-container {
+  .workbench-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+
+  .workbench-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+  }
+
+  .work-card {
+    padding: var(--space-xl);
+    transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .work-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .card-accent {
+    width: 24px;
+    height: 2px;
+    background: var(--color-teal);
+    margin-bottom: var(--space-lg);
+    transition: width 0.3s ease;
+  }
+
+  .card-accent.accent-blue { background: var(--color-blue); }
+  .card-accent.accent-purple { background: var(--color-purple); }
+
+  .work-card:hover .card-accent {
+    width: 40px;
+  }
+
+  .work-card h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.01em;
+  }
+
+  .work-card p {
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  /* === Latest dispatch === */
+  .latest-dispatch {
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
+  }
+
+  .dispatch-inner {
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 0 var(--space-lg);
   }
 
-  .report-header {
-    margin-bottom: var(--space-xl);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
+  .dispatch-card {
+    display: block;
+    padding: var(--space-xl);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+    position: relative;
   }
 
-  .report-meta {
+  .dispatch-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .dispatch-card:hover .cta-arrow {
+    transform: translateX(4px);
+  }
+
+  .dispatch-meta {
     font-family: var(--font-mono);
     font-size: 0.8rem;
     color: var(--color-text-muted);
@@ -212,141 +409,66 @@ const format_date = (date_str: string) => {
     margin-bottom: var(--space-md);
   }
 
-  .report-number {
-    color: var(--color-green);
+  .dispatch-number {
+    color: var(--color-accent);
   }
 
-  .meta-sep {
+  .dispatch-sep {
     opacity: 0.3;
   }
 
-  .report-title {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
+  .dispatch-title {
+    font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 500;
-  }
-
-  .report-title a {
     color: var(--color-text-bright);
-    text-decoration: none;
+    margin-bottom: var(--space-lg);
+    transition: color 0.2s ease;
   }
 
-  .report-title a:hover {
-    color: var(--color-green);
+  .dispatch-card:hover .dispatch-title {
+    color: var(--color-accent);
   }
 
-  /* === Highlights === */
-  .report-highlights {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    padding: var(--space-lg);
-    margin-bottom: var(--space-xl);
-  }
-
-  .highlights-label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: var(--space-md);
-  }
-
-  .highlights-list {
+  .dispatch-highlights {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding-left: 0;
   }
 
-  .highlights-list li {
-    font-size: 0.9rem;
+  .dispatch-highlights li {
+    font-size: 0.88rem;
     color: var(--color-text);
     display: flex;
     gap: var(--space-sm);
   }
 
-  .highlight-marker {
-    color: var(--color-green);
+  .hl-marker {
+    color: var(--color-accent);
     font-weight: 700;
     flex-shrink: 0;
   }
 
-  /* === Report Body === */
-  .report-body {
-    margin-bottom: var(--space-xl);
-  }
-
-  .report-body :global(h2) {
-    margin-top: var(--space-xl);
-    margin-bottom: var(--space-md);
-    padding-bottom: var(--space-sm);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .report-body :global(h3) {
-    margin-top: var(--space-lg);
-    margin-bottom: var(--space-sm);
-  }
-
-  .report-body :global(p) {
-    margin-bottom: var(--space-md);
-  }
-
-  .report-body :global(hr) {
-    border: none;
-    border-top: 1px solid var(--color-border);
-    margin: var(--space-xl) 0;
-  }
-
-  .report-body :global(em) {
-    color: var(--color-text-muted);
-  }
-
-  .report-body :global(strong) {
-    color: var(--color-text-bright);
-    font-weight: 600;
-  }
-
-  .report-body :global(ul), .report-body :global(ol) {
-    margin-bottom: var(--space-md);
-    padding-left: var(--space-lg);
-  }
-
-  .report-body :global(li) {
-    margin-bottom: var(--space-xs);
-  }
-
-  .report-body :global(blockquote) {
-    border-left: 2px solid var(--color-green);
-    padding-left: var(--space-md);
-    color: var(--color-text-muted);
-    font-style: italic;
-    margin-bottom: var(--space-md);
-  }
-
-  /* === Report Footer === */
-  .report-footer {
-    padding-top: var(--space-lg);
-    border-top: 1px solid var(--color-border);
-  }
-
-  .read-link {
+  .dispatch-cta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
     font-family: var(--font-mono);
     font-size: 0.85rem;
-    color: var(--color-green);
-    text-decoration: none;
-    transition: all 0.2s ease;
+    color: var(--color-text-muted);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
   }
 
-  .read-link:hover {
-    color: var(--color-text-bright);
-    letter-spacing: 0.05em;
+  .cta-arrow {
+    transition: transform 0.2s ease;
   }
 
   /* === Signal === */
   .signal {
-    padding: var(--space-2xl) var(--space-lg);
+    padding: var(--space-xl) var(--space-lg) var(--space-2xl);
   }
 
   .signal-inner {
@@ -355,22 +477,50 @@ const format_date = (date_str: string) => {
     text-align: center;
   }
 
-  .signal-line {
-    width: 40px;
-    height: 1px;
-    background: var(--color-border);
-    margin: 0 auto var(--space-lg);
+  .signal-content {
+    padding: var(--space-xl);
+    border-radius: 2px;
   }
 
   .signal-text {
     font-family: var(--font-mono);
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
   }
 
-  .signal-text a {
-    color: var(--color-green);
-    text-decoration: underline;
-    text-underline-offset: 3px;
+  .signal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .signal-link {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .signal-link:hover {
+    color: var(--color-accent);
+  }
+
+  .signal-divider {
+    color: var(--color-text-muted);
+    opacity: 0.3;
+  }
+
+  /* === Mobile === */
+  @media (max-width: 768px) {
+    .workbench-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 15vw, 5rem);
+    }
   }
 </style>
