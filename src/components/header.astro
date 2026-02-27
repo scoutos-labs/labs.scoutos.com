@@ -23,9 +23,9 @@ const current_path = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(5, 5, 7, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(5, 5, 7, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -60,7 +60,10 @@ const current_path = Astro.url.pathname;
   }
 
   .logo-labs {
-    color: var(--color-green);
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   nav {
@@ -83,7 +86,7 @@ const current_path = Astro.url.pathname;
   }
 
   .rss-link {
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
   .rss-link:hover {

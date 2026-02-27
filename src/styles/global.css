@@ -7,23 +7,37 @@
 
 /* === Custom Properties === */
 :root {
-  /* ScoutOS Labs palette — pushed vivid */
-  --color-blue: #6B7FD7;
-  --color-green: #4ECDC4;
-  --color-purple: #C77DFF;
+  /* ScoutOS brand palette — labs is an offshoot of scoutos.com */
+  --color-teal: #5BA9A4;
+  --color-blue: #8491C1;
+  --color-purple: #BE98C7;
   --color-black: #040406;
   --color-white: #FFFFFF;
 
+  /* Labs accent — slightly more vivid teal for "active" elements */
+  --color-accent: #6EC4BE;
+
   /* Surfaces */
   --color-bg: #050507;
-  --color-surface: #0c0c12;
-  --color-surface-raised: #12121c;
-  --color-border: #1a1a2e;
+  --color-surface: rgba(12, 12, 18, 0.6);
+  --color-surface-raised: rgba(18, 18, 28, 0.6);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-subtle: rgba(255, 255, 255, 0.03);
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-highlight: rgba(255, 255, 255, 0.04);
 
   /* Text */
-  --color-text: #d4d4d8;
-  --color-text-muted: #71717a;
+  --color-text: #a1a1aa;
+  --color-text-muted: #52525b;
   --color-text-bright: #fafafa;
+
+  /* Gradients — derived from ScoutOS brand colors */
+  --gradient-brand: linear-gradient(135deg, #5BA9A4, #8491C1, #BE98C7);
+  --gradient-brand-subtle: linear-gradient(135deg, rgba(91, 169, 164, 0.15), rgba(132, 145, 193, 0.15), rgba(190, 152, 199, 0.15));
+  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(91, 169, 164, 0.08) 0%, rgba(132, 145, 193, 0.04) 40%, transparent 70%);
 
   /* Typography */
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
@@ -58,31 +72,15 @@ body {
   overflow-x: hidden;
 }
 
-/* === Grid texture overlay === */
+/* === Subtle grid texture === */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Scanline effect — very subtle */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
+    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 80px 80px;
   pointer-events: none;
   z-index: 0;
 }
@@ -111,7 +109,7 @@ p {
 }
 
 a {
-  color: var(--color-green);
+  color: var(--color-accent);
   text-decoration: none;
   transition: color 0.2s ease;
 }
@@ -146,6 +144,34 @@ pre code {
   padding: 0;
 }
 
+/* === Glass panel === */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* === Gradient border util === */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: var(--gradient-brand);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  border-radius: inherit;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 /* === Utility === */
 .container {
   max-width: var(--max-width);
@@ -162,7 +188,7 @@ pre code {
 }
 
 .text-green {
-  color: var(--color-green);
+  color: var(--color-accent);
 }
 
 .text-blue {
